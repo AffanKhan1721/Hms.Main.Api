@@ -40,5 +40,3 @@ public class UserRepository : IUserRepository
         return _dbContext.SaveChangesAsync();
     }
 }
-
-

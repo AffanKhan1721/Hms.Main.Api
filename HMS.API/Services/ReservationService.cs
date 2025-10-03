@@ -3,6 +3,8 @@ using HMS.API.Mappers;
 using HMS.API.Models;
 using HMS.API.Repositories.Interfaces;
 using HMS.API.Services.Interfaces;
+using HMS.API.Resources;
+using HMS.API.Mappers;
 
 namespace HMS.API.Services;
 
@@ -68,6 +70,13 @@ public class ReservationService : IReservationService
         }
     }
 
+    public async Task<CreateReservationResource> CreateReservationResourceAsync(int userId, CreateReservationCommand request)
+    {
+        var dto = ResourceMapper.ToCreateReservationDto(request, userId);
+        var result = await CreateReservationAsync(dto);
+        return ResourceMapper.ToCreateReservationResponse(result);
+    }
+
     public async Task<IEnumerable<ReservationDto>> GetUserReservationsAsync(int userId)
     {
         var reservations = await _unitOfWork.Reservations.GetByCustomerIdAsync(userId);
@@ -84,6 +93,12 @@ public class ReservationService : IReservationService
         }
 
         return reservationDtos;
+    }
+
+    public async Task<IEnumerable<ReservationResource>> GetUserReservationsResourceAsync(int userId)
+    {
+        var dtos = await GetUserReservationsAsync(userId);
+        return ResourceMapper.ToReservationResponseList(dtos);
     }
 
     public async Task<IEnumerable<ReservationManagementDto>> GetPendingReservationsAsync()
@@ -104,6 +119,12 @@ public class ReservationService : IReservationService
         return reservationDtos;
     }
 
+    public async Task<IEnumerable<ReservationManagementResponse>> GetPendingReservationsResourceAsync()
+    {
+        var dtos = await GetPendingReservationsAsync();
+        return ResourceMapper.ToReservationManagementResponseList(dtos);
+    }
+
     public async Task<IEnumerable<ReservationManagementDto>> GetAllReservationsAsync()
     {
         var reservations = await _unitOfWork.Reservations.GetAllReservationsAsync();
@@ -120,6 +141,12 @@ public class ReservationService : IReservationService
         }
 
         return reservationDtos;
+    }
+
+    public async Task<IEnumerable<ReservationManagementResponse>> GetAllReservationsResourceAsync()
+    {
+        var dtos = await GetAllReservationsAsync();
+        return ResourceMapper.ToReservationManagementResponseList(dtos);
     }
 
     public async Task<UpdateReservationStatusResultDto> UpdateReservationStatusAsync(UpdateReservationStatusDto dto)
@@ -182,5 +209,12 @@ public class ReservationService : IReservationService
                 ErrorMessage = $"An error occurred: {ex.Message}"
             };
         }
+    }
+
+    public async Task<UpdateReservationStatusResponse> UpdateReservationStatusResourceAsync(UpdateReservationStatusRequest request)
+    {
+        var dto = ResourceMapper.ToUpdateReservationStatusDto(request);
+        var result = await UpdateReservationStatusAsync(dto);
+        return ResourceMapper.ToUpdateReservationStatusResponse(result);
     }
 }

@@ -7,7 +7,6 @@ namespace HMS.API.Mappers;
 
 public static class ResourceMapper
 {
-    // Auth mappings
     public static LoginDto ToLoginDto(Resources.LoginRequest request)
     {
         return new LoginDto
@@ -26,8 +25,7 @@ public static class ResourceMapper
         };
     }
 
-    // User mappings
-    public static CreateGuestDto ToCreateGuestDto(Resources.CreateGuestRequest request)
+    public static CreateGuestDto ToCreateGuestDto(Resources.CreateGuestCommand request)
     {
         return new CreateGuestDto
         {
@@ -38,18 +36,17 @@ public static class ResourceMapper
         };
     }
 
-    public static Resources.CreateGuestResponse ToCreateGuestResponse(CreateGuestResultDto dto)
+    public static Resources.CreateGuestResource ToCreateGuestResponse(CreateGuestResultDto dto)
     {
-        return new Resources.CreateGuestResponse
+        return new Resources.CreateGuestResource
         {
             Message = dto.Success ? "Guest user created successfully." : dto.ErrorMessage ?? "Unknown error occurred."
         };
     }
 
-    // Room mappings
-    public static Resources.RoomResponse ToRoomResponse(RoomDto dto)
+    public static Resources.RoomResource ToRoomResponse(RoomDto dto)
     {
-        return new Resources.RoomResponse
+        return new Resources.RoomResource
         {
             Id = dto.Id,
             Number = dto.Number,
@@ -59,13 +56,12 @@ public static class ResourceMapper
         };
     }
 
-    public static IEnumerable<Resources.RoomResponse> ToRoomResponseList(IEnumerable<RoomDto> dtos)
+    public static IEnumerable<Resources.RoomResource> ToRoomResponseList(IEnumerable<RoomDto> dtos)
     {
         return dtos.Select(ToRoomResponse);
     }
 
-    // Reservation mappings
-    public static CreateReservationDto ToCreateReservationDto(Resources.CreateReservationRequest request, int userId)
+    public static CreateReservationDto ToCreateReservationDto(Resources.CreateReservationCommand request, int userId)
     {
         return new CreateReservationDto
         {
@@ -76,18 +72,18 @@ public static class ResourceMapper
         };
     }
 
-    public static Resources.CreateReservationResponse ToCreateReservationResponse(CreateReservationResultDto dto)
+    public static Resources.CreateReservationResource ToCreateReservationResponse(CreateReservationResultDto dto)
     {
-        return new Resources.CreateReservationResponse
+        return new Resources.CreateReservationResource
         {
             Id = dto.ReservationId ?? 0,
             Price = dto.Price ?? 0
         };
     }
 
-    public static Resources.ReservationResponse ToReservationResponse(ReservationDto dto)
+    public static Resources.ReservationResource ToReservationResponse(ReservationDto dto)
     {
-        return new Resources.ReservationResponse
+        return new Resources.ReservationResource
         {
             Id = dto.Id,
             RoomNumber = dto.RoomNumber,
@@ -98,12 +94,11 @@ public static class ResourceMapper
         };
     }
 
-    public static IEnumerable<Resources.ReservationResponse> ToReservationResponseList(IEnumerable<ReservationDto> dtos)
+    public static IEnumerable<Resources.ReservationResource> ToReservationResponseList(IEnumerable<ReservationDto> dtos)
     {
         return dtos.Select(ToReservationResponse);
     }
 
-    // Admin Room mappings
     public static AddRoomDto ToAddRoomDto(Resources.AddRoomRequest request)
     {
         return new AddRoomDto
@@ -134,7 +129,6 @@ public static class ResourceMapper
         };
     }
 
-    // Admin User mappings
     public static AddManagerDto ToAddManagerDto(Resources.AddManagerRequest request)
     {
         return new AddManagerDto
@@ -165,7 +159,6 @@ public static class ResourceMapper
         };
     }
 
-    // Manager Reservation mappings
     public static Resources.ReservationManagementResponse ToReservationManagementResponse(ReservationManagementDto dto)
     {
         return new Resources.ReservationManagementResponse

@@ -1,6 +1,6 @@
 namespace HMS.API.Resources;
 
-public class CreateReservationRequest
+public class CreateReservationCommand
 {
     public int RoomRef { get; set; }
     public DateTime CheckInDate { get; set; }
@@ -8,13 +8,13 @@ public class CreateReservationRequest
 
 }
 
-public class CreateReservationResponse
+public class CreateReservationResource
 {
     public int Id { get; set; }
     public decimal Price { get; set; }
 }
 
-public class ReservationResponse
+public class ReservationResource
 {
     public int Id { get; set; }
     public string? RoomNumber { get; set; }

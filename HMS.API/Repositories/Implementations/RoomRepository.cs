@@ -50,13 +50,9 @@ public class RoomRepository : IRoomRepository
     public async Task UpdateRoomStatusesBasedOnReservationsAsync()
     {
         var today = DateTime.Today;
-
-
         var approvedReservations = await _dbContext.Reservations
             .Where(r => r.Status == "Approved")
             .ToListAsync();
-
-        // Get all rooms
         var allRooms = await _dbContext.Rooms.ToListAsync();
 
         foreach (var room in allRooms)

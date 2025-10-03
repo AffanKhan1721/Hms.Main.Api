@@ -4,10 +4,8 @@
 
 namespace HMS.API.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class UpdateModel : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
@@ -94,7 +92,6 @@ namespace HMS.API.Data.Migrations
                 onDelete: ReferentialAction.Cascade);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(

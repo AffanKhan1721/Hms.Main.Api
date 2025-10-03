@@ -19,7 +19,7 @@ public static class ReservationMapper
             CheckOutDate = reservation.CheckOutDate,
             ReservationDate = reservation.ReservationDate,
             Status = reservation.Status,
-            Price = 0 // Placeholder, actual price should come from service
+            Price = 0
         };
     }
 
@@ -43,7 +43,7 @@ public static class ReservationMapper
             CheckOutDate = reservation.CheckOutDate,
             ReservationDate = reservation.ReservationDate,
             Status = reservation.Status,
-            Price = 0 // Placeholder, actual price should come from service
+            Price = 0
         };
     }
 

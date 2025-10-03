@@ -2,6 +2,7 @@ using HMS.API.Constants;
 using HMS.API.DTOs.Reports;
 using HMS.API.Repositories.Interfaces;
 using HMS.API.Services.Interfaces;
+using HMS.API.Mappers;
 
 namespace HMS.API.Services;
 
@@ -16,12 +17,12 @@ public class ReportService : IReportService
         _cacheService = cacheService;
     }
 
-    public async Task<IEnumerable<AvailableRoomReportDto>> GetAvailableRoomsReportAsync()
+    public async Task<IEnumerable<Resources.AvailableRoomReportResponse>> GetAvailableRoomsReportAsync()
     {
         const string cacheKey = CacheKeys.Reports.AvailableRooms;
 
 
-        var cachedResult = await _cacheService.GetAsync<IEnumerable<AvailableRoomReportDto>>(cacheKey);
+        var cachedResult = await _cacheService.GetAsync<IEnumerable<Resources.AvailableRoomReportResponse>>(cacheKey);
         if (cachedResult != null)
         {
             Console.WriteLine("GetAvailableRoomsReportAsync: Returning cached data");
@@ -30,20 +31,21 @@ public class ReportService : IReportService
 
         var result = await _reportRepository.GetAllAvailableRoomsAsync();
 
-        await _cacheService.SetAsync(cacheKey, result);
+        var reportResponses = ReportMapper.ToAvailableRoomReportResponseList(result);
+        await _cacheService.SetAsync(cacheKey, reportResponses);
 
         Console.WriteLine("GetAvailableRoomsReportAsync: Fetched from database and cached");
-        return result;
+        return reportResponses;
     }
 
-    public async Task<IEnumerable<BookedRoomReportDto>> GetBookedRoomsReportAsync()
+    public async Task<IEnumerable<Resources.BookedRoomReportResponse>> GetBookedRoomsReportAsync()
     {
         const string cacheKey = CacheKeys.Reports.BookedRooms;
 
         try
         {
 
-            var cachedResult = await _cacheService.GetAsync<IEnumerable<BookedRoomReportDto>>(cacheKey);
+            var cachedResult = await _cacheService.GetAsync<IEnumerable<Resources.BookedRoomReportResponse>>(cacheKey);
             if (cachedResult != null)
             {
                 Console.WriteLine("GetBookedRoomsReportAsync: Returning cached data");
@@ -53,11 +55,11 @@ public class ReportService : IReportService
             var result = await _reportRepository.GetAllBookedRoomsAsync();
             Console.WriteLine($"GetBookedRoomsReportAsync: Found {result.Count()} booked rooms");
 
-
-            await _cacheService.SetAsync(cacheKey, result);
+            var reportResponses = ReportMapper.ToBookedRoomReportResponseList(result);
+            await _cacheService.SetAsync(cacheKey, reportResponses);
 
             Console.WriteLine("GetBookedRoomsReportAsync: Fetched from database and cached");
-            return result;
+            return reportResponses;
         }
         catch (Exception ex)
         {
@@ -66,10 +68,10 @@ public class ReportService : IReportService
         }
     }
 
-    public async Task<IEnumerable<UserReportDto>> GetUsersReportAsync()
+    public async Task<IEnumerable<Resources.UserReportResponse>> GetUsersReportAsync()
     {
         const string cacheKey = CacheKeys.Reports.Users;
-        var cachedResult = await _cacheService.GetAsync<IEnumerable<UserReportDto>>(cacheKey);
+        var cachedResult = await _cacheService.GetAsync<IEnumerable<Resources.UserReportResponse>>(cacheKey);
         if (cachedResult != null)
         {
             Console.WriteLine("GetUsersReportAsync: Returning cached data");
@@ -79,11 +81,11 @@ public class ReportService : IReportService
 
         var result = await _reportRepository.GetAllUsersAsync();
 
-
-        await _cacheService.SetAsync(cacheKey, result);
+        var reportResponses = ReportMapper.ToUserReportResponseList(result);
+        await _cacheService.SetAsync(cacheKey, reportResponses);
 
         Console.WriteLine("GetUsersReportAsync: Fetched from database and cached");
-        return result;
+        return reportResponses;
     }
 
 

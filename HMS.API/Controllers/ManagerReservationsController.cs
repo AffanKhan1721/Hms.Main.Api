@@ -1,9 +1,8 @@
-using HMS.API.DTOs.Reservation;
-using HMS.API.Mappers;
 using HMS.API.Resources;
 using HMS.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.API.Controllers;
 
@@ -20,45 +19,31 @@ public class ManagerReservationsController : ControllerBase
     }
 
     [HttpGet("pending")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationManagementResponse>))]
     public async Task<IActionResult> GetPendingReservations()
     {
-        var reservationDtos = await _reservationService.GetPendingReservationsAsync();
-        var reservationResponses = ResourceMapper.ToReservationManagementResponseList(reservationDtos);
+        var reservationResponses = await _reservationService.GetPendingReservationsResourceAsync();
         return Ok(reservationResponses);
     }
 
     [HttpGet("all")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationManagementResponse>))]
     public async Task<IActionResult> GetAllReservations()
     {
-        var reservationDtos = await _reservationService.GetAllReservationsAsync();
-        var reservationResponses = ResourceMapper.ToReservationManagementResponseList(reservationDtos);
+        var reservationResponses = await _reservationService.GetAllReservationsResourceAsync();
         return Ok(reservationResponses);
     }
 
     [HttpPut("status")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateReservationStatusResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateReservationStatus([FromBody] UpdateReservationStatusRequest request)
     {
-        var dto = new UpdateReservationStatusDto
+        var response = await _reservationService.UpdateReservationStatusResourceAsync(request);
+        if (!response.Success)
         {
-            ReservationId = request.ReservationId,
-            Status = request.Status
-        };
-
-        var result = await _reservationService.UpdateReservationStatusAsync(dto);
-
-        if (!result.Success)
-        {
-            return BadRequest(new UpdateReservationStatusResponse
-            {
-                Success = false,
-                Message = result.ErrorMessage
-            });
+            return BadRequest(response);
         }
-
-        return Ok(new UpdateReservationStatusResponse
-        {
-            Success = true,
-            Message = "Reservation status updated successfully."
-        });
+        return Ok(response);
     }
 }

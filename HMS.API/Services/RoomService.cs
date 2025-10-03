@@ -3,6 +3,8 @@ using HMS.API.Mappers;
 using HMS.API.Models;
 using HMS.API.Repositories.Interfaces;
 using HMS.API.Services.Interfaces;
+using HMS.API.Resources;
+using HMS.API.Mappers;
 
 namespace HMS.API.Services;
 
@@ -28,6 +30,18 @@ public class RoomService : IRoomService
         var availableRooms = rooms.Where(r => r.Status == "Available");
 
         return RoomMapper.ToDtoList(availableRooms);
+    }
+
+    public async Task<IEnumerable<RoomResource>> GetAllRoomsResourceAsync()
+    {
+        var dtos = await GetAllRoomsAsync();
+        return ResourceMapper.ToRoomResponseList(dtos);
+    }
+
+    public async Task<IEnumerable<RoomResource>> GetAvailableRoomsResourceAsync(string? checkIn, string? checkOut)
+    {
+        var dtos = await GetAvailableRoomsAsync(checkIn, checkOut);
+        return ResourceMapper.ToRoomResponseList(dtos);
     }
 
     public async Task<AddRoomResultDto> AddRoomAsync(AddRoomDto dto)
@@ -71,6 +85,13 @@ public class RoomService : IRoomService
         }
     }
 
+    public async Task<AddRoomResponse> AddRoomResourceAsync(AddRoomRequest request)
+    {
+        var dto = ResourceMapper.ToAddRoomDto(request);
+        var result = await AddRoomAsync(dto);
+        return ResourceMapper.ToAddRoomResponse(result);
+    }
+
     public async Task<DeleteRoomResultDto> DeleteRoomAsync(int roomId)
     {
         try
@@ -102,5 +123,11 @@ public class RoomService : IRoomService
                 ErrorMessage = $"An error occurred: {ex.Message}"
             };
         }
+    }
+
+    public async Task<DeleteRoomResponse> DeleteRoomResourceAsync(int roomId)
+    {
+        var result = await DeleteRoomAsync(roomId);
+        return ResourceMapper.ToDeleteRoomResponse(result);
     }
 }

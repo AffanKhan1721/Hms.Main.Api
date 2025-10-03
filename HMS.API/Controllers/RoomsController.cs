@@ -1,12 +1,14 @@
-using HMS.API.Mappers;
 using HMS.API.Resources;
 using HMS.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HMS.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class RoomsController : ControllerBase
 {
     private readonly IRoomService _roomService;
@@ -17,18 +19,18 @@ public class RoomsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<RoomResource>))]
     public async Task<IActionResult> GetAllRooms()
     {
-        var roomDtos = await _roomService.GetAllRoomsAsync();
-        var roomResponses = ResourceMapper.ToRoomResponseList(roomDtos);
-        return Ok(roomResponses);
+        var roomResources = await _roomService.GetAllRoomsResourceAsync();
+        return Ok(roomResources);
     }
 
     [HttpGet("available")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<RoomResource>))]
     public async Task<IActionResult> GetAvailableRooms([FromQuery] string? checkIn, [FromQuery] string? checkOut)
     {
-        var roomDtos = await _roomService.GetAvailableRoomsAsync(checkIn, checkOut);
-        var roomResponses = ResourceMapper.ToRoomResponseList(roomDtos);
-        return Ok(roomResponses);
+        var roomResources = await _roomService.GetAvailableRoomsResourceAsync(checkIn, checkOut);
+        return Ok(roomResources);
     }
 }

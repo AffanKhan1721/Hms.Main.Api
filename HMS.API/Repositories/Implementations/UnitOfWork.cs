@@ -26,6 +26,7 @@ public class UnitOfWork : IUnitOfWork
             return _users ??= new UserRepository(_context);
         }
     }
+
     public IRoomRepository Rooms
     {
         get

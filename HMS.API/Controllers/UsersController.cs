@@ -1,7 +1,7 @@
-using HMS.API.Mappers;
 using HMS.API.Resources;
 using HMS.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.API.Controllers;
 
@@ -17,16 +17,15 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("guests")]
-    public async Task<IActionResult> CreateGuest([FromBody] CreateGuestRequest request)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateGuestResource))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateGuest([FromBody] CreateGuestCommand request)
     {
-        var dto = ResourceMapper.ToCreateGuestDto(request);
-        var result = await _userService.CreateGuestAsync(dto);
-
-        if (!result.Success)
+        var response = await _userService.CreateGuestResourceAsync(request);
+        if (response.Message.StartsWith("Guest user created successfully") == false)
         {
-            return BadRequest(result.ErrorMessage);
+            return BadRequest(response.Message);
         }
-
-        return Ok(ResourceMapper.ToCreateGuestResponse(result));
+        return Ok(response);
     }
 }

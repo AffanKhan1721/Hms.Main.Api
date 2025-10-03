@@ -1,9 +1,8 @@
-using HMS.API.DTOs.User;
-using HMS.API.Mappers;
 using HMS.API.Resources;
 using HMS.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.API.Controllers;
 
@@ -20,53 +19,28 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpPost("managers")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddManagerResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddManager([FromBody] AddManagerRequest request)
     {
-        var dto = new AddManagerDto
+        var response = await _userService.AddManagerResourceAsync(request);
+        if (!response.Success)
         {
-            FullName = request.FullName,
-            Email = request.Email,
-            Password = request.Password,
-            PhoneNumber = request.PhoneNumber
-        };
-
-        var result = await _userService.AddManagerAsync(dto);
-
-        if (!result.Success)
-        {
-            return BadRequest(new AddManagerResponse
-            {
-                Success = false,
-                Message = result.ErrorMessage
-            });
+            return BadRequest(response);
         }
-
-        return Ok(new AddManagerResponse
-        {
-            Success = true,
-            Message = "Manager added successfully.",
-            UserId = result.UserId
-        });
+        return Ok(response);
     }
 
     [HttpDelete("{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeleteUserResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteUser(int userId)
     {
-        var result = await _userService.DeleteUserAsync(userId);
-
-        if (!result.Success)
+        var response = await _userService.DeleteUserResourceAsync(userId);
+        if (!response.Success)
         {
-            return BadRequest(new DeleteUserResponse
-            {
-                Success = false,
-                Message = result.ErrorMessage
-            });
+            return BadRequest(response);
         }
-
-        return Ok(new DeleteUserResponse
-        {
-            Success = true,
-            Message = "User deleted successfully."
-        });
+        return Ok(response);
     }
 }

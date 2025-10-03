@@ -15,7 +15,6 @@ namespace HMS.API.Data.Migrations
     [Migration("20251001202740_InitialCreate")]
     partial class InitialCreate
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

@@ -1,10 +1,11 @@
 using HMS.API.DTOs.Reports;
+using HMS.API.Resources;
 
 namespace HMS.API.Services.Interfaces;
 
 public interface IReportService
 {
-    Task<IEnumerable<AvailableRoomReportDto>> GetAvailableRoomsReportAsync();
-    Task<IEnumerable<BookedRoomReportDto>> GetBookedRoomsReportAsync();
-    Task<IEnumerable<UserReportDto>> GetUsersReportAsync();
+    Task<IEnumerable<AvailableRoomReportResponse>> GetAvailableRoomsReportAsync();
+    Task<IEnumerable<BookedRoomReportResponse>> GetBookedRoomsReportAsync();
+    Task<IEnumerable<UserReportResponse>> GetUsersReportAsync();
 }

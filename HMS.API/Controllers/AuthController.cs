@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.API.Controllers
 {
@@ -23,8 +24,10 @@ namespace HMS.API.Controllers
             _passwordHasher = passwordHasher;
         }
 
-
         [HttpPost("Login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
@@ -59,6 +62,7 @@ namespace HMS.API.Controllers
         }
 
         [HttpPost("logout")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LogoutResponse))]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -66,6 +70,9 @@ namespace HMS.API.Controllers
         }
 
         [HttpGet("Me")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(MeResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetCurrentUser()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

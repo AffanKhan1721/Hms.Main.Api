@@ -1,6 +1,6 @@
 namespace HMS.API.Resources;
 
-public class CreateGuestRequest
+public class CreateGuestCommand
 {
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
@@ -8,12 +8,12 @@ public class CreateGuestRequest
     public string? Phone { get; set; }
 }
 
-public class CreateGuestResponse
+public class CreateGuestResource
 {
     public string Message { get; set; } = string.Empty;
 }
 
-public class UserResponse
+public class UserResource
 {
     public int UserId { get; set; }
     public string FullName { get; set; } = string.Empty;

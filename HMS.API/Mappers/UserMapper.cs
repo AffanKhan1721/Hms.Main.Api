@@ -5,7 +5,7 @@ namespace HMS.API.Mappers;
 
 public static class UserMapper
 {
-    public static User ToModel(CreateGuestRequest request)
+    public static User ToModel(CreateGuestCommand request)
     {
         return new User
         {
@@ -16,9 +16,9 @@ public static class UserMapper
         };
     }
 
-    public static UserResponse ToResponse(User user)
+    public static UserResource ToResponse(User user)
     {
-        return new UserResponse
+        return new UserResource
         {
             UserId = user.UserId,
             FullName = user.FullName,

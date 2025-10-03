@@ -36,7 +36,7 @@ public class HmsDbContext : DbContext
                 UserId = 1,
                 FullName = "Admin",
                 Email = "admin@hotel.com",
-                PasswordHash = "$2a$10$eQB9OoO4ZKwlQg/K3heNa.aRREgJKqAob.GdeLk/z6mcbzAOEQlny", // Hashed password for "adminpassword"
+                PasswordHash = "$2a$10$eQB9OoO4ZKwlQg/K3heNa.aRREgJKqAob.GdeLk/z6mcbzAOEQlny",
                 PhoneNumber = "123-456-7890",
                 Role = "Admin"
             }

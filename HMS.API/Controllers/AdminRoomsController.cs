@@ -1,10 +1,9 @@
-using HMS.API.DTOs.Room;
-using HMS.API.Mappers;
 using HMS.API.Resources;
 using HMS.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.API.Controllers;
 
@@ -21,61 +20,36 @@ public class AdminRoomsController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddRoomResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddRoom([FromBody] AddRoomRequest request)
     {
-        var dto = new AddRoomDto
+        var response = await _roomService.AddRoomResourceAsync(request);
+        if (!response.Success)
         {
-            RoomNumber = request.RoomNumber,
-            RoomType = request.RoomType,
-            Capacity = request.Capacity,
-            Status = request.Status
-        };
-
-        var result = await _roomService.AddRoomAsync(dto);
-
-        if (!result.Success)
-        {
-            return BadRequest(new AddRoomResponse
-            {
-                Success = false,
-                Message = result.ErrorMessage
-            });
+            return BadRequest(response);
         }
-
-        return Ok(new AddRoomResponse
-        {
-            Success = true,
-            Message = "Room added successfully.",
-            RoomId = result.RoomId
-        });
+        return Ok(response);
     }
 
     [HttpDelete("{roomId}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeleteRoomResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteRoom(int roomId)
     {
-        var result = await _roomService.DeleteRoomAsync(roomId);
-
-        if (!result.Success)
+        var response = await _roomService.DeleteRoomResourceAsync(roomId);
+        if (!response.Success)
         {
-            return BadRequest(new DeleteRoomResponse
-            {
-                Success = false,
-                Message = result.ErrorMessage
-            });
+            return BadRequest(response);
         }
-
-        return Ok(new DeleteRoomResponse
-        {
-            Success = true,
-            Message = "Room deleted successfully."
-        });
+        return Ok(response);
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<RoomResource>))]
     public async Task<IActionResult> GetAllRooms()
     {
-        var roomDtos = await _roomService.GetAllRoomsAsync();
-        var roomResponses = ResourceMapper.ToRoomResponseList(roomDtos);
-        return Ok(roomResponses);
+        var roomResources = await _roomService.GetAllRoomsResourceAsync();
+        return Ok(roomResources);
     }
 }

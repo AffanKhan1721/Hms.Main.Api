@@ -1,6 +1,6 @@
 namespace HMS.API.Resources;
 
-public class RoomResponse
+public class RoomResource
 {
     public int Id { get; set; }
     public string Number { get; set; } = string.Empty;

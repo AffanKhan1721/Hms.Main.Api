@@ -4,6 +4,7 @@ using HMS.API.Resources;
 using HMS.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.API.Controllers;
 
@@ -20,26 +21,26 @@ public class AdminReportsController : ControllerBase
     }
 
     [HttpGet("available-rooms")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AvailableRoomReportResponse>))]
     public async Task<IActionResult> GetAvailableRoomsReport()
     {
-        var reportDtos = await _reportService.GetAvailableRoomsReportAsync();
-        var reportResponses = ReportMapper.ToAvailableRoomReportResponseList(reportDtos);
+        var reportResponses = await _reportService.GetAvailableRoomsReportAsync();
         return Ok(reportResponses);
     }
 
     [HttpGet("booked-rooms")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BookedRoomReportResponse>))]
     public async Task<IActionResult> GetBookedRoomsReport()
     {
-        var reportDtos = await _reportService.GetBookedRoomsReportAsync();
-        var reportResponses = ReportMapper.ToBookedRoomReportResponseList(reportDtos);
+        var reportResponses = await _reportService.GetBookedRoomsReportAsync();
         return Ok(reportResponses);
     }
 
     [HttpGet("users")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<UserReportResponse>))]
     public async Task<IActionResult> GetUsersReport()
     {
-        var reportDtos = await _reportService.GetUsersReportAsync();
-        var reportResponses = ReportMapper.ToUserReportResponseList(reportDtos);
+        var reportResponses = await _reportService.GetUsersReportAsync();
         return Ok(reportResponses);
     }
 }

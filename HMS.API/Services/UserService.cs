@@ -2,6 +2,8 @@ using HMS.API.DTOs.User;
 using HMS.API.Models;
 using HMS.API.Repositories.Interfaces;
 using HMS.API.Services.Interfaces;
+using HMS.API.Resources;
+using HMS.API.Mappers;
 
 namespace HMS.API.Services;
 
@@ -29,9 +31,7 @@ public class UserService : IUserService
             return new CreateGuestResultDto { Success = false, ErrorMessage = "User with this email already exists." };
         }
 
-
         var passwordHash = _passwordHasher.HashPassword(dto.Password);
-
 
         var user = new User
         {
@@ -48,23 +48,27 @@ public class UserService : IUserService
         return new CreateGuestResultDto { Success = true };
     }
 
+    public async Task<CreateGuestResource> CreateGuestResourceAsync(CreateGuestCommand request)
+    {
+        var dto = ResourceMapper.ToCreateGuestDto(request);
+        var result = await CreateGuestAsync(dto);
+        return ResourceMapper.ToCreateGuestResponse(result);
+    }
+
     public async Task<AddManagerResultDto> AddManagerAsync(AddManagerDto dto)
     {
         if (string.IsNullOrEmpty(dto.FullName) || string.IsNullOrEmpty(dto.Email) || string.IsNullOrEmpty(dto.Password))
         {
             return new AddManagerResultDto { Success = false, ErrorMessage = "Full name, email, and password are required." };
         }
-
-
+        
         var existingUser = await _unitOfWork.Users.GetByEmailAsync(dto.Email);
         if (existingUser != null)
         {
             return new AddManagerResultDto { Success = false, ErrorMessage = "User with this email already exists." };
         }
 
-
         var passwordHash = _passwordHasher.HashPassword(dto.Password);
-
 
         var user = new User
         {
@@ -81,6 +85,13 @@ public class UserService : IUserService
         return new AddManagerResultDto { Success = true, UserId = user.UserId };
     }
 
+    public async Task<AddManagerResponse> AddManagerResourceAsync(AddManagerRequest request)
+    {
+        var dto = ResourceMapper.ToAddManagerDto(request);
+        var result = await AddManagerAsync(dto);
+        return ResourceMapper.ToAddManagerResponse(result);
+    }
+
     public async Task<DeleteUserResultDto> DeleteUserAsync(int userId)
     {
         try
@@ -90,7 +101,6 @@ public class UserService : IUserService
             {
                 return new DeleteUserResultDto { Success = false, ErrorMessage = "User not found." };
             }
-
 
             if (user.Role == "Admin")
             {
@@ -112,6 +122,12 @@ public class UserService : IUserService
         {
             return new DeleteUserResultDto { Success = false, ErrorMessage = $"An error occurred: {ex.Message}" };
         }
+    }
+
+    public async Task<DeleteUserResponse> DeleteUserResourceAsync(int userId)
+    {
+        var result = await DeleteUserAsync(userId);
+        return ResourceMapper.ToDeleteUserResponse(result);
     }
 
     public async Task<User?> GetByIdAsync(int userId)

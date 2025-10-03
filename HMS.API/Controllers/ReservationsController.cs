@@ -1,9 +1,9 @@
-using HMS.API.Mappers;
 using HMS.API.Resources;
 using HMS.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace HMS.API.Controllers;
 
@@ -20,7 +20,10 @@ public class ReservationsController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateReservation([FromBody] CreateReservationRequest request)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreateReservationResource))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> CreateReservation([FromBody] CreateReservationCommand request)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
@@ -28,19 +31,18 @@ public class ReservationsController : ControllerBase
             return Unauthorized();
         }
 
-        var dto = ResourceMapper.ToCreateReservationDto(request, int.Parse(userId));
-        var result = await _reservationService.CreateReservationAsync(dto);
-
-        if (!result.Success)
+        var response = await _reservationService.CreateReservationResourceAsync(int.Parse(userId), request);
+        if (response.Id == 0 && response.Price == 0)
         {
-            return BadRequest(result.ErrorMessage);
+            return BadRequest("Failed to create reservation.");
         }
-
-        return Ok(ResourceMapper.ToCreateReservationResponse(result));
+        return Ok(response);
     }
 
     [HttpGet("my")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationResource>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetMyReservations()
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -48,9 +50,7 @@ public class ReservationsController : ControllerBase
         {
             return Unauthorized();
         }
-
-        var reservationDtos = await _reservationService.GetUserReservationsAsync(int.Parse(userId));
-        var reservationResponses = ResourceMapper.ToReservationResponseList(reservationDtos);
+        var reservationResponses = await _reservationService.GetUserReservationsResourceAsync(int.Parse(userId));
         return Ok(reservationResponses);
     }
 }

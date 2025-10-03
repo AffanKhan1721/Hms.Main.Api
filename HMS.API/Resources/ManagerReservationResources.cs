@@ -19,7 +19,7 @@ public class ReservationManagementResponse
 public class UpdateReservationStatusRequest
 {
     public int ReservationId { get; set; }
-    public string Status { get; set; } = string.Empty; // "Approved", "Declined", "Pending"
+    public string Status { get; set; } = string.Empty;
 }
 
 public class UpdateReservationStatusResponse
